@@ -23,7 +23,13 @@ source=("https://raw.githubusercontent.com/mafredri/zsh-async/main/async.zsh"
 	"https://github.com/aquarockslug/aqua_arch_configs/raw/main/neovim.lua"
 	"https://github.com/aquarockslug/aqua_arch_configs/raw/main/zellij.kdl"
 )
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('deefe9fecfe709a02a99cc846928a73703ffd18dd282afd5f07d8d8a593f8ea3'
+            'f908dde7b88e24de555e36e9c0c7b984bea768efd3ffec02af3e688863c67ba3'
+            'e87bfd986aa84c8b0c39c687bbf5634810d7df2832d53d32769b5b7961a75ecc'
+            'a35dd2a0473bbe4a7b413c983cef37dada9501c301ecd8a05583b3fd93e0fdbd'
+            '0cea0fd335f4b7d50e77a763c5a3a600141c3dc2b3a9c91c20e36ea091388cec'
+            '02347c0448d5bb95a3b4d9ca426dbabaec337fc3a5fe802e81d59a3c42d58622'
+            '3b4d794c04864b66d0d5e20c79520d60af80f01dfee4637bd747b387cfa2311b')
 package() {
 	# % glow %
 	mkdir -pv "${pkgdir}"/usr/share/glow
@@ -44,7 +50,7 @@ EOM
 		cat <<EOM
 cmd q quit
 cmd preview_on :{{
-    set ratios 1:2:3
+    set ratios 1:3
     set preview
     set info
     map zp preview_off
@@ -55,11 +61,17 @@ cmd preview_off :{{
     set info size:time
     map zp preview_on
 }}
+cmd edit :{{
+	preview_off
+	# TODO calculate width
+	\$zellij run -c -d right --width 80 -- nvim \$f
+}}
+map c \$cat \$f | wcopy # copy contents of file to clipboard
 preview_off
 map <enter> shell
 map \` !true # show the result of previous commands
 map d delete
-map E \$zellij run -c -d right --width 80 -- nvim \$f
+map E edit
 map e \$zellij run -c --in-place --width 80 -- nvim \$f
 map <right> \$zellij action move-focus-or-tab right
 map <left> \$zellij action move-focus-or-tab left
@@ -73,9 +85,11 @@ EOM
 	cp "${srcdir}"/dracula.zsh-theme "${pkgdir}"/usr/share/zsh/themes/dracula.zsh-theme
 
 	# % zellij %
-	mkdir -pv "${pkgdir}"/etc/zellij/
-	cp "${srcdir}"/zellij.kdl "${pkgdir}"/etc/zellij/config.kdl
-	cp "${srcdir}"/zjstatus.wasm "${pkgdir}"/etc/zellij/
+	if [ -f /bin/zellij ]; then
+		mkdir -pv "${pkgdir}"/etc/zellij/
+		cp "${srcdir}"/zellij.kdl "${pkgdir}"/etc/zellij/config.kdl
+		cp "${srcdir}"/zjstatus.wasm "${pkgdir}"/etc/zellij/
+	fi
 
 	# % neovim %
 	mkdir -pv "${pkgdir}"/etc/xdg/nvim/plugin
@@ -90,7 +104,7 @@ source /usr/share/zsh/themes/dracula.zsh-theme
 source /usr/share/zsh/aqua_profile.plugin.zsh
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.plugin.zsh
-source $(zellij setup --generate-completion zsh)
+source $(if [ -f /bin/zellij ]; then zellij setup --generate-completion zsh; fi)
 autoload -Uz compinit && compinit
 if [[ -z \$ZELLIJ ]]; then
 if [[ \$ZELLIJ_AUTO_ATTACH == "true" ]];

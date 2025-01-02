@@ -25,7 +25,8 @@ export PATH="$PATH:~/.local/share/pnpm"
 export PNPM_HOME="~/.local/share/pnpm"
 export ZELLIJ_CONFIG_DIR=/etc/zellij;
 export ZELLIJ_CONFIG_FILE=/etc/zellij/config.kdl
-bindkey ' ' magic-space
+bindkey " " magic-space
+# TODO bindkey "^E" zellij action edit-scrollback
 
 # SYSTEM
 alias q="exit"
@@ -37,7 +38,7 @@ alias yank="xclip -selection clipboard" && alias put="xclip -o -selection clipbo
 [ $WSL = true ] && alias yank="wcopy" && alias put="wpaste" # use wsl-clipboard if on WSL
 
 # SYSTEM INFO
-alias ls='eza --icons --group-directories-first -a'
+alias ls='eza --icons --group-directories-first'
 alias tasks="ps aux"
 alias fd="sudo fdisk -l"
 alias df="duf"
@@ -50,6 +51,7 @@ alias ..='cd ../'
 alias ...='cd ../../'
 alias ....='cd ../../../'
 alias cls='clear && ls'
+alias l='clear && ls'
 
 # APPLICATIONS
 alias buku="buku --suggest"

@@ -1,10 +1,12 @@
+# ignore built packages
 *.zst
-*.zsh-theme
-
+*.lz4
 pkg/
 src/
-
+e
+# ignore remote source files
 async.zsh
 plug.vim
 .version
 zjstatus.wasm
+*.zsh-theme
